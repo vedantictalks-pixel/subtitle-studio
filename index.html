@@ -1,0 +1,1031 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Subtitle Studio, free auto subtitles in any language</title>
+<meta name="description" content="Free auto subtitles in Hindi, Hinglish, English and 90+ languages. Style every word, then export SRT or a captioned video. Runs in your browser.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Anton&family=Baloo+2:wght@700;800&family=Bebas+Neue&family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=Great+Vibes&family=Hind:wght@400;500;600;700&family=Kalam:wght@700&family=Montserrat:ital,wght@0,400;0,700;0,900;1,700;1,900&family=Mukta:wght@700;800&family=Noto+Sans+Devanagari:wght@400;700;900&family=Oswald:wght@700&family=Pacifico&family=Playfair+Display:ital,wght@0,400;0,700;1,400;1,700&family=Poppins:ital,wght@0,600;0,800;1,800&family=Tiro+Devanagari+Hindi&display=swap">
+<style>
+:root{--canvas:#E8ECF2;--panel:#FFFFFF;--ink:#18203A;--muted:#58617D;--line:#D5DBE6;--soft:#F2F4F8;--accent:#E8980F;--accent-ink:#3E2700;--accent-tint:#FCEFD6;--stage:#121935;--danger:#B3261E;--ok:#1E7A4C;--r:10px;--ui:'Hind',system-ui,-apple-system,sans-serif;--display:'Bricolage Grotesque','Hind',sans-serif;color-scheme:light}
+@media (prefers-color-scheme:dark){:root{--canvas:#0E1325;--panel:#161E37;--ink:#E7EAF3;--muted:#9EA7C2;--line:#2A3456;--soft:#1D2644;--accent:#F2A93B;--accent-ink:#2A1A00;--accent-tint:#3A2C10;--stage:#090D1F;--danger:#FF8A80;--ok:#7FD6A4;color-scheme:dark}}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%}
+body{background:var(--canvas);color:var(--ink);font-family:var(--ui);font-size:15px;line-height:1.5}
+button,input,select{font:inherit;color:inherit}
+button{cursor:pointer;border-radius:8px;border:1px solid var(--line);background:var(--panel);padding:7px 14px;font-weight:500}
+button:hover{border-color:var(--muted)}
+button.primary{background:var(--accent);border-color:var(--accent);color:var(--accent-ink);font-weight:600}
+button.primary:hover{filter:brightness(1.05)}
+button.ghost{background:transparent}
+button.sm{padding:4px 10px;font-size:13px}
+button.big{padding:11px 22px;font-size:16px}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+select,input[type=text]{background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:6px 8px;width:100%}
+input[type=color]{width:100%;height:32px;border:1px solid var(--line);border-radius:8px;background:var(--panel);padding:2px;cursor:pointer}
+input[type=range]{width:100%;accent-color:var(--accent)}
+input[type=checkbox]{accent-color:var(--accent);width:16px;height:16px}
+[hidden]{display:none!important}
+.top{display:flex;align-items:center;gap:12px;padding:10px 18px;border-bottom:1px solid var(--line);background:var(--panel);min-height:56px}
+.brand{font-family:var(--display);font-weight:800;font-size:20px;letter-spacing:-.01em;white-space:nowrap}
+.brand small{font-family:var(--ui);font-weight:500;font-size:12px;color:var(--muted);margin-left:8px;letter-spacing:0}
+.fileinfo{color:var(--muted);font-size:14px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.spacer{flex:1}
+.start{display:flex;justify-content:center;padding:48px 18px}
+.startcard{width:100%;max-width:680px}
+.startcard h1{font-family:var(--display);font-weight:800;font-size:clamp(30px,5vw,46px);line-height:1.05;letter-spacing:-.02em;margin:0 0 12px}
+.startcard h2{font-family:var(--display);font-weight:800;font-size:28px;margin:0 0 16px}
+.lede{font-size:17px;color:var(--muted);margin:0 0 24px;max-width:56ch}
+.drop{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;border:2px dashed var(--line);border-radius:14px;padding:34px 18px;background:var(--panel);cursor:pointer;text-align:center}
+.drop:hover,.drop.over{border-color:var(--accent);background:var(--accent-tint)}
+.drop-main{font-weight:600;font-size:17px}
+.drop-sub{color:var(--muted);font-size:14px}
+.grid3{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px;margin-top:18px}
+.field{display:flex;flex-direction:column;gap:4px;font-size:13px;color:var(--muted)}
+.field>span{font-weight:500}
+.row{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-top:18px}
+.hint{color:var(--muted);font-size:13px;margin:8px 0 0}
+.err{color:var(--danger);font-size:14px;margin:8px 0 0;min-height:0}
+.banner{background:#FFF1C2;color:#3E2700;border-bottom:1px solid #E8C25A;padding:10px 18px;font-size:15px}
+.banner.bad{background:#FDE2DF;color:#5C1410;border-color:#E9A39C}
+.syscheck{margin-top:22px;border:1px solid var(--line);border-radius:12px;background:var(--panel);padding:12px 14px}
+.syscheck .head{display:flex;justify-content:space-between;align-items:center;gap:8px;font-weight:600;font-size:14px}
+.syscheck ul{list-style:none;margin:8px 0 0;padding:0;display:grid;gap:4px}
+.syscheck li{display:grid;grid-template-columns:18px 170px 1fr;gap:8px;font-size:13px;align-items:baseline}
+.syscheck li .nm{font-weight:500}
+.syscheck li .tx{color:var(--muted)}
+.dot{width:10px;height:10px;border-radius:50%;display:inline-block;background:var(--line)}
+.dot.ok{background:var(--ok)}.dot.warn{background:var(--accent)}.dot.bad{background:var(--danger)}
+details.tech{margin-top:12px;font-size:13px}
+details.tech pre{white-space:pre-wrap;word-break:break-word;background:var(--soft);border:1px solid var(--line);border-radius:8px;padding:10px;max-height:220px;overflow:auto;font-size:12px}
+@media (max-width:560px){.syscheck li{grid-template-columns:18px 1fr}.syscheck li .tx{grid-column:2}}
+.steps{list-style:none;padding:0;margin:0 0 16px}
+.steps li{padding:6px 0 6px 28px;position:relative;color:var(--muted)}
+.steps li::before{content:"";position:absolute;left:4px;top:13px;width:10px;height:10px;border-radius:50%;border:2px solid var(--line)}
+.steps li.on{color:var(--ink);font-weight:600}
+.steps li.on::before{border-color:var(--accent);background:var(--accent)}
+.steps li.done{color:var(--ok)}
+.steps li.done::before{border-color:var(--ok);background:var(--ok)}
+.bar{height:8px;background:var(--soft);border-radius:4px;overflow:hidden;border:1px solid var(--line)}
+.bar>div{height:100%;width:0;background:var(--accent);transition:width .3s}
+.bar.indet>div{width:30%!important;animation:ind 1.2s ease-in-out infinite}
+@keyframes ind{0%{transform:translateX(-100%)}100%{transform:translateX(340%)}}
+@media (prefers-reduced-motion:reduce){.bar.indet>div{animation:none;width:100%!important;opacity:.5}}
+#editor{display:grid;grid-template-columns:340px minmax(0,1fr) 360px;height:calc(100vh - 57px)}
+.col{overflow:auto;background:var(--panel);min-height:0}
+.left{border-right:1px solid var(--line)}
+.right{border-left:1px solid var(--line)}
+.panelhead{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:14px 16px 8px;position:sticky;top:0;background:var(--panel);z-index:2}
+.panelhead h3{font-family:var(--display);font-weight:800;font-size:18px;margin:0}
+.pill{font-size:12px;padding:2px 10px;border-radius:999px;background:var(--accent-tint);color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:60%}
+.tools{padding:0 16px 10px;border-bottom:1px solid var(--line);position:sticky;top:48px;background:var(--panel);z-index:2}
+.seg{display:flex;align-items:center;gap:4px;flex-wrap:wrap}
+.seg .lbl{font-size:13px;color:var(--muted);margin-right:4px}
+.seg button{padding:4px 10px;font-size:13px}
+.seg button.on{background:var(--accent-tint);border-color:var(--accent);font-weight:600}
+.caplist{padding:6px 8px 40px}
+.cap{border:1px solid transparent;border-radius:10px;padding:8px 10px;cursor:pointer}
+.cap:hover{background:var(--soft)}
+.cap.sel{border-color:var(--accent);background:var(--accent-tint)}
+.cap.live .ctime{color:var(--accent-ink);font-weight:600}
+.ctime{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--muted);font-variant-numeric:tabular-nums}
+.ctime input{width:74px;padding:2px 6px;font-size:12px;border-radius:6px}
+.ctime input.bad{border-color:var(--danger)}
+.ctext{margin-top:4px;padding:4px 6px;border-radius:6px;outline:none;font-size:16px;line-height:1.45;word-break:break-word}
+.ctext:focus{background:var(--panel);box-shadow:0 0 0 2px var(--accent)}
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+.chip{padding:3px 9px;font-size:14px;border-radius:999px;background:var(--panel)}
+.chip.hl{background:var(--accent);border-color:var(--accent);color:var(--accent-ink);font-weight:600}
+.chip.bh{border-style:dashed;border-color:var(--ink);font-weight:600}
+.chip.bh::before{content:"⤺ ";opacity:.7}
+.capnote{font-size:12px;color:var(--muted);margin-top:6px}
+.stage{background:var(--stage);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;padding:16px;min-height:0;min-width:0}
+#view{max-width:100%;max-height:calc(100vh - 175px);border-radius:8px;background:#000;display:block}
+.transport{display:flex;align-items:center;gap:12px;width:min(100%,560px);color:#E7EAF3}
+.round{width:40px;height:40px;border-radius:50%;padding:0;display:grid;place-items:center;background:var(--accent);border-color:var(--accent);color:var(--accent-ink);flex:none}
+.tc{font-variant-numeric:tabular-nums;font-size:13px;white-space:nowrap;color:#C9CEE0}
+.cutstatus{color:#C9CEE0;font-size:13px;margin:0;min-height:18px;text-align:center}
+.gallery{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;padding:4px 16px 8px}
+.pcard{padding:4px;border-radius:10px;text-align:left;display:flex;flex-direction:column;gap:4px;background:var(--panel)}
+.pcard canvas{width:100%;aspect-ratio:9/16;border-radius:6px;display:block}
+.pcard .pn{font-size:12px;font-weight:600;line-height:1.25}
+.pcard .pt{font-size:11px;color:var(--muted);line-height:1.2}
+.pcard.on{border:2px solid var(--accent);padding:3px}
+.pad{padding:0 16px;margin-top:4px}
+.tabs{display:flex;gap:2px;padding:12px 16px 0;border-bottom:1px solid var(--line);flex-wrap:wrap;position:sticky;top:48px;background:var(--panel);z-index:2}
+.tab{border:none;border-bottom:2px solid transparent;border-radius:0;background:transparent;padding:6px 8px;font-size:14px;color:var(--muted)}
+.tab.on{color:var(--ink);border-bottom-color:var(--accent);font-weight:600}
+.controls{padding:12px 16px 40px;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px 12px}
+.ctl{display:flex;flex-direction:column;gap:4px;font-size:13px;color:var(--muted);min-width:0}
+.ctl .lab{display:flex;justify-content:space-between;gap:6px;font-weight:500}
+.ctl .val{color:var(--ink);font-variant-numeric:tabular-nums}
+.ctl.wide{grid-column:1/-1}
+.ctl.check{flex-direction:row;align-items:center;gap:8px;color:var(--ink);grid-column:1/-1}
+.modal{position:fixed;inset:0;background:rgba(8,12,28,.55);display:grid;place-items:center;z-index:20;padding:16px}
+.modalcard{background:var(--panel);border-radius:16px;padding:24px;width:min(100%,480px);border:1px solid var(--line)}
+.modalcard h2{font-family:var(--display);font-weight:800;margin:0 0 14px;font-size:24px}
+label.check{display:flex;gap:10px;align-items:flex-start;padding:6px 0;cursor:pointer}
+label.check input{margin-top:3px}
+#vid{position:absolute;width:1px;height:1px;opacity:0;pointer-events:none;left:-10px;top:-10px}
+@media (max-width:1100px){#editor{grid-template-columns:1fr;height:auto}.stage{order:-1}#view{max-height:70vh}.left,.right{border:none;border-top:1px solid var(--line)}.caplist{max-height:60vh;overflow:auto}}
+</style>
+</head>
+<body>
+<header class="top">
+  <div class="brand">Subtitle Studio<small>free, runs in your browser</small></div>
+  <div id="fileInfo" class="fileinfo"></div>
+  <div class="spacer"></div>
+  <button id="btnNew" class="ghost" hidden>New video</button>
+  <button id="btnImport" class="ghost" hidden>Import SRT</button>
+  <button id="btnExport" class="primary" hidden>Export</button>
+</header>
+<div id="bootMsg" class="banner">Loading… If this message does not go away, open this page in Google Chrome or Microsoft Edge on a computer.</div>
+<div id="envMsg" class="banner" hidden></div>
+
+<main>
+<section id="start" class="start">
+  <div class="startcard">
+    <h1>Subtitles for your video, in any language</h1>
+    <p class="lede">Drop in a video, pick a language, then style every word. Everything runs in this browser, so your video is never uploaded.</p>
+    <label id="drop" class="drop" tabindex="0">
+      <input type="file" id="fileIn" accept="video/*" hidden>
+      <span class="drop-main" id="dropMain">Drop a video here or choose a file</span>
+      <span class="drop-sub" id="dropSub">MP4, MOV or WEBM. Best under 10 minutes.</span>
+    </label>
+    <p id="fileErr" class="err"></p>
+    <div class="grid3">
+      <label class="field"><span>Spoken language</span>
+        <select id="spoken">
+          <option value="auto">Detect automatically</option><option value="hi">Hindi or Hinglish</option><option value="en">English</option><option value="mr">Marathi</option><option value="bn">Bengali</option><option value="gu">Gujarati</option><option value="pa">Punjabi</option><option value="ta">Tamil</option><option value="te">Telugu</option><option value="kn">Kannada</option><option value="ml">Malayalam</option><option value="ur">Urdu</option><option value="ne">Nepali</option><option value="es">Spanish</option><option value="fr">French</option><option value="de">German</option><option value="ar">Arabic</option><option value="pt">Portuguese</option><option value="ru">Russian</option><option value="ja">Japanese</option><option value="ko">Korean</option><option value="zh">Chinese</option>
+        </select></label>
+      <label class="field"><span>Subtitles in</span>
+        <select id="subLang">
+          <option value="same">Same as spoken</option><option value="hi">Hindi (Devanagari)</option><option value="hinglish">Hinglish (English letters)</option><option value="en">English (translates if needed)</option>
+        </select></label>
+      <label class="field"><span>Accuracy</span>
+        <select id="quality">
+          <option value="fast">Fast (quickest to load)</option><option value="better" selected>Better (recommended)</option><option value="best">Best (strong computers only)</option>
+        </select></label>
+    </div>
+    <p class="hint">Nothing to install. The first time, the AI loads by itself in the background, which takes a few minutes. After that it starts right away. Better is the best balance for Hindi and Hinglish.</p>
+    <div class="row">
+      <button id="btnStart" class="primary big">Create subtitles</button>
+      <button id="btnStartSrt" class="ghost">Use my own SRT file instead</button>
+      <input type="file" id="srtIn" accept=".srt,.vtt,text/plain" hidden>
+    </div>
+    <div class="syscheck" aria-live="polite">
+      <div class="head"><span>Setup check</span><button id="btnRecheck" class="ghost sm">Check again</button></div>
+      <ul id="sysList"></ul>
+    </div>
+  </div>
+</section>
+
+<section id="work" class="start" hidden>
+  <div class="startcard">
+    <h2 id="workTitle">Making your subtitles</h2>
+    <ol id="steps" class="steps"></ol>
+    <div class="bar" id="workBar"><div id="barFill"></div></div>
+    <p id="workNote" class="hint"></p>
+    <p id="workErr" class="err"></p>
+    <details class="tech" id="errDetails" hidden><summary>Technical details for fixing this</summary><pre id="errText"></pre><button id="btnCopyErr" class="ghost sm">Copy details</button></details>
+    <div class="row" id="workActions" hidden>
+      <button id="btnRetryFast" class="primary">Try again in Fast mode</button>
+      <button id="btnBack" class="ghost">Back</button>
+    </div>
+  </div>
+</section>
+
+<section id="editor" hidden>
+  <aside class="col left" aria-label="Captions">
+    <div class="panelhead"><h3>Captions</h3><span id="langPill" class="pill"></span></div>
+    <div class="tools">
+      <div class="seg" role="group" aria-label="What tapping a word does">
+        <span class="lbl">Tap words to</span>
+        <button data-tap="hl" class="on">Highlight</button>
+        <button data-tap="bh">Send behind</button>
+      </div>
+    </div>
+    <div id="capList" class="caplist"></div>
+  </aside>
+  <div class="stage">
+    <canvas id="view" aria-label="Video preview with subtitles"></canvas>
+    <div class="transport">
+      <button id="btnPlay" class="round" aria-label="Play">
+        <svg id="icoPlay" width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><path d="M4 2.5v11l9-5.5z" fill="currentColor"/></svg>
+        <svg id="icoPause" width="16" height="16" viewBox="0 0 16 16" aria-hidden="true" hidden><path d="M4 2h3v12H4zM9 2h3v12H9z" fill="currentColor"/></svg>
+      </button>
+      <input type="range" id="scrub" min="0" max="1" step="0.01" value="0" aria-label="Seek">
+      <span id="tc" class="tc">0:00 / 0:00</span>
+    </div>
+    <p id="cutStatus" class="cutstatus" role="status"></p>
+  </div>
+  <aside class="col right" aria-label="Style">
+    <div class="panelhead"><h3>Style</h3><span id="presetName" class="pill"></span></div>
+    <div id="gallery" class="gallery"></div>
+    <div class="row pad"><button id="btnSaveStyle" class="ghost sm">Save as my style</button><button id="btnResetStyle" class="ghost sm">Undo my changes</button></div>
+    <div class="tabs" role="tablist" id="tabs">
+      <button class="tab on" data-tab="text" role="tab">Text</button>
+      <button class="tab" data-tab="highlight" role="tab">Highlight</button>
+      <button class="tab" data-tab="effects" role="tab">Effects</button>
+      <button class="tab" data-tab="motion" role="tab">Motion</button>
+      <button class="tab" data-tab="behind" role="tab">Behind</button>
+      <button class="tab" data-tab="title" role="tab">Title</button>
+    </div>
+    <div id="controls" class="controls"></div>
+  </aside>
+</section>
+</main>
+
+<div id="exportModal" class="modal" hidden role="dialog" aria-modal="true" aria-labelledby="expTitle">
+  <div class="modalcard">
+    <h2 id="expTitle">Export</h2>
+    <label class="check"><input type="checkbox" id="exSrt" checked><span>SRT file, for Premiere Pro and YouTube</span></label>
+    <label class="check"><input type="checkbox" id="exVtt"><span>VTT file, for websites</span></label>
+    <label class="check"><input type="checkbox" id="exVid" checked><span>Video with the subtitles burned in</span></label>
+    <p class="hint" id="exVidNote">Subtitle files use natural sentence-length lines, whatever style you picked. The video plays through once while it records, so a 1-minute video takes about a minute. Keep this tab open and in front.</p>
+    <div class="bar" id="exBarWrap" hidden><div id="exBar"></div></div>
+    <p id="exStatus" class="hint"></p>
+    <p id="exErr" class="err"></p>
+    <div class="row">
+      <button id="btnDoExport" class="primary">Export files</button>
+      <button id="btnCancelExport" class="ghost" hidden>Stop recording</button>
+      <button id="btnCloseExport" class="ghost">Close</button>
+    </div>
+  </div>
+</div>
+
+<video id="vid" playsinline preload="auto"></video>
+
+<script type="module">
+const TF_URL = 'https://cdn.jsdelivr.net/npm/@huggingface/transformers@3.8.1';
+const MP_URL = 'https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.35';
+const SEG_MODEL = 'https://storage.googleapis.com/mediapipe-models/image_segmenter/selfie_segmenter/float16/latest/selfie_segmenter.tflite';
+
+const $ = s => document.querySelector(s);
+const $$ = s => [...document.querySelectorAll(s)];
+$('#bootMsg').hidden = true;
+const LOG = [];
+const log = m => { LOG.push(`[${new Date().toLocaleTimeString()}] ${m}`); console.log('[subtitle-studio]', m); };
+const UA = navigator.userAgent;
+const IS_CHROMIUM = /Chrome\/|Edg\//.test(UA) && !/OPR\//.test(UA);
+let EMBEDDED = false; try { EMBEDDED = window.top !== window.self; } catch { EMBEDDED = true; }
+const IN_APP = /Instagram|FBAN|FBAV|FB_IAB|FBIOS|Line\/|Snapchat|musical_ly|BytedanceWebview/i.test(UA);
+const IS_MOBILE = (navigator.userAgentData && navigator.userAgentData.mobile) || /Android|iPhone|iPad|iPod|Mobile/i.test(UA);
+(function envBanner() {
+  const b = $('#envMsg');
+  if (IN_APP) { b.textContent = 'You opened this link inside an app like Instagram or Facebook. Tap the menu (⋯) and choose Open in browser, or open the link in Chrome on a computer.'; b.classList.add('bad'); b.hidden = false; }
+  else if (EMBEDDED) { b.innerHTML = 'This page is shown inside another page, which can block the AI. <a href="' + location.href + '" target="_blank" rel="noopener">Open it in its own tab</a> in Chrome or Edge.'; b.classList.add('bad'); b.hidden = false; }
+  else if (IS_MOBILE) { b.textContent = 'Subtitle Studio needs a laptop or desktop computer, because the AI is too heavy for phones. Open this same link on your computer in Chrome or Edge.'; b.hidden = false; }
+  else if (!IS_CHROMIUM) { b.textContent = 'For the AI parts to work, open this page in Google Chrome or Microsoft Edge.'; b.hidden = false; }
+})();
+const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
+const esc = s => String(s).replace(/[&<>"]/g, m => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[m]));
+const easeOutBack = p => { const c1 = 1.70158, c3 = c1 + 1; return 1 + c3 * Math.pow(p - 1, 3) + c1 * Math.pow(p - 1, 2); };
+const cleanW = t => t.replace(/[.,!?।॥;:"'“”‘’()\[\]{}…-]/g, '');
+
+/* ---------------- fonts ---------------- */
+const FONTS = [['Montserrat','sans'],['Poppins','sans'],['Anton','sans'],['Bebas Neue','sans'],['Oswald','sans'],['Playfair Display','serif'],['Great Vibes','script'],['Pacifico','script'],['Hind','sans'],['Mukta','sans'],['Baloo 2','sans'],['Noto Sans Devanagari','sans'],['Tiro Devanagari Hindi','serif'],['Kalam','script']];
+function fontCSS(fam, weight, italic, px) {
+  const kind = (FONTS.find(f => f[0] === fam) || [0, 'sans'])[1];
+  const fb = kind === 'serif' ? '"Tiro Devanagari Hindi", serif' : kind === 'script' ? '"Kalam", cursive' : '"Noto Sans Devanagari", "Hind", sans-serif';
+  return `${italic ? 'italic ' : ''}${weight} ${Math.max(1, Math.round(px))}px "${fam}", ${fb}`;
+}
+async function loadFonts() {
+  const loads = [];
+  for (const [f] of FONTS) for (const w of ['400', '700', '900', 'italic 900', 'italic 400']) loads.push(document.fonts.load(`${w} 40px "${f}"`, 'Aa अ').catch(() => {}));
+  await Promise.all(loads);
+}
+
+/* ---------------- styles ---------------- */
+const BASE = { font:'Montserrat', weight:900, italic:false, keyFont:'Montserrat', keyWeight:900, keyItalic:false, size:4, keyScale:1, color:'#ffffff', keyColor:'#ffffff', effect:'outline', strokeColor:'#000000', strokeW:14, boxColor:'#000000', boxAlpha:0.8, glow:45, layout:'inline', anim:'none', caseMode:'none', x:50, y:78, maxW:84, lineGap:1.15, spacing:0, wordsPer:4, highlight:false, emoji:false, behind:'off', behindFont:'Montserrat', behindSize:28, behindY:33, behindColor:'#ffffff', behindAlpha:1, title:false, t1:'All about', t2:'NIOS BOARD', tFont1:'Playfair Display', tFont2:'Montserrat', tColor1:'#ffffff', tColor2:'#9be22d', tSize:4.5, tX:8, tY:7 };
+const PRESETS = [
+  { id:'mixed', name:'Mixed font stack', tag:'From your samples', s:{ keyFont:'Playfair Display', keyWeight:400, size:4.2, keyScale:1.5, effect:'shadow', layout:'stack', anim:'fade', wordsPer:4, y:62, highlight:true } },
+  { id:'neon', name:'Neon keyword', tag:'From your samples', s:{ weight:700, size:3.2, keyScale:2.1, keyColor:'#c6f432', effect:'glow', layout:'stack', anim:'pop', wordsPer:3, y:55, highlight:true } },
+  { id:'script', name:'Script accent', tag:'From your samples', s:{ size:4, keyFont:'Great Vibes', keyWeight:400, keyScale:1.8, keyColor:'#e24b4a', effect:'underline', anim:'fade', wordsPer:4, y:62, highlight:true } },
+  { id:'italic', name:'Bold italic glow', tag:'From your samples', s:{ italic:true, keyItalic:true, size:4.6, keyScale:1.3, keyColor:'#ef9f27', effect:'glow', layout:'stack', anim:'pop', wordsPer:2, y:48, highlight:true } },
+  { id:'podcast', name:'Podcast build-up', tag:'From your samples', s:{ weight:700, size:3.3, keyScale:2.2, keyColor:'#9be22d', caseMode:'keyupper', effect:'glow', layout:'stack', anim:'build', wordsPer:3, y:62, highlight:true, title:true } },
+  { id:'classic', name:'Classic outline', tag:'Basic', s:{ weight:700, size:3.8, wordsPer:6, y:82 } },
+  { id:'karaoke', name:'Word highlight', tag:'Basic', s:{ size:4, keyColor:'#fac775', anim:'karaoke', wordsPer:4, y:76 } },
+  { id:'box', name:'Black box', tag:'Basic', s:{ weight:700, size:3.6, effect:'boxall', wordsPer:5, y:80 } },
+  { id:'pop', name:'Pop word by word', tag:'Basic', s:{ size:7, anim:'pop', wordsPer:1, y:70, caseMode:'upper' } },
+  { id:'big', name:'Big center', tag:'Basic', s:{ size:6, keyColor:'#97c459', layout:'lines', anim:'karaoke', wordsPer:2, y:50, caseMode:'upper' } },
+  { id:'bar', name:'Subtle bar', tag:'Basic', s:{ font:'Hind', weight:500, size:3, color:'#ecebe6', effect:'bar', wordsPer:7, y:88 } },
+  { id:'bBig', name:'Big word behind', tag:'Behind speaker', s:{ weight:700, size:3.4, effect:'shadow', wordsPer:4, y:64, highlight:true, behind:'key', behindSize:30, behindY:33 } },
+  { id:'bMag', name:'Magazine title', tag:'Behind speaker', s:{ weight:700, size:3.2, wordsPer:5, y:86, highlight:true, behind:'mag', behindSize:34, behindY:19, behindColor:'#fac775' } },
+  { id:'bEcho', name:'Echo behind', tag:'Behind speaker', s:{ size:3.6, effect:'shadow', keyColor:'#9be22d', wordsPer:4, y:64, highlight:true, behind:'echo', behindSize:32, behindY:35 } },
+  { id:'bAll', name:'Caption behind', tag:'Behind speaker', s:{ size:3.4, wordsPer:3, y:45, behind:'all', behindSize:15, behindY:45 } },
+];
+function loadMine() { try { return JSON.parse(localStorage.getItem('ss-my-styles') || '[]'); } catch { return []; } }
+function saveMine(list) { try { localStorage.setItem('ss-my-styles', JSON.stringify(list)); return true; } catch { return false; } }
+let MINE = loadMine();
+let ST = { ...BASE, ...PRESETS[1].s };
+let presetId = 'neon', presetSnapshot = { ...ST }, edited = false;
+
+/* ---------------- app state ---------------- */
+const S = { file:null, url:'', video:$('#vid'), words:[], caps:[], sel:-1, live:-1, tap:'hl', langLabel:'', exporting:false, cancelExport:false };
+
+/* ---------------- keywords & emoji ---------------- */
+const STOP = new Set(('a an the is are was were be to of in on at for and or but so it its this that i you he she we they my your our me us do does did have has had not no with as by from will can just very then than there here what when who how hai hain ka ki ke ko se me mein main hum tum aap yeh ye woh wo kya to toh bhi aur par ek na nahi tha thi the hi ho raha rahi rahe kar karna jo ki').split(' ').concat(['है','हैं','का','की','के','को','से','में','मैं','हम','तुम','आप','यह','ये','वह','वो','क्या','तो','भी','और','पर','एक','ना','नहीं','था','थी','थे','ही','हो','रहा','रही','रहे','कर','करना','जो','कि']));
+function pickKey(ws) {
+  let best = -1, score = -1;
+  ws.forEach((w, i) => {
+    const c = cleanW(w.t); if (!c) return;
+    let sc = [...c].length;
+    if (STOP.has(c.toLowerCase())) sc -= 10;
+    if (/\d/.test(c)) sc += 4;
+    if (/^[A-Z]{2,}/.test(c)) sc += 3;
+    if (sc > score) { score = sc; best = i; }
+  });
+  return score > 2 ? best : -1;
+}
+const EMOJI = { money:'💰',paisa:'💰','पैसा':'💰',love:'❤️',pyaar:'❤️','प्यार':'❤️',heart:'❤️',dil:'❤️','दिल':'❤️',fire:'🔥',time:'⏰',samay:'⏰','समय':'⏰',idea:'💡',brain:'🧠',dimag:'🧠',book:'📚',books:'📚',kitab:'📚','किताब':'📚',study:'📚',padhai:'📚','पढ़ाई':'📚',exam:'📝',exams:'📝',board:'📋',school:'🏫',student:'🎓',students:'🎓',success:'🏆',win:'🏆',question:'❓',sawal:'❓','सवाल':'❓',why:'🤔',kyun:'🤔','क्यों':'🤔',think:'🤔',happy:'😊',khush:'😊',sad:'😢',body:'💪',strong:'💪',health:'💪',phone:'📱',video:'🎬',world:'🌍',duniya:'🌍','दुनिया':'🌍',home:'🏠',ghar:'🏠','घर':'🏠',food:'🍽️',khana:'🍽️',start:'🚀',shuru:'🚀','शुरू':'🚀',growth:'📈',goal:'🎯',focus:'🎯',music:'🎵',stop:'✋',yes:'✅',haan:'✅',no:'❌',learn:'📖',teacher:'🧑‍🏫',result:'📊',marks:'💯',fast:'⚡',power:'⚡',superhuman:'🦸',laws:'⚖️',physics:'🔬',science:'🔬' };
+function emojiFor(ws) { for (const w of ws) { const c = cleanW(w.t); const e = EMOJI[c.toLowerCase()] || EMOJI[c]; if (e) return e; } return ''; }
+
+/* ---------------- Hinglish transliteration ---------------- */
+const CONS = {'क':'k','ख':'kh','ग':'g','घ':'gh','ङ':'n','च':'ch','छ':'chh','ज':'j','झ':'jh','ञ':'n','ट':'t','ठ':'th','ड':'d','ढ':'dh','ण':'n','त':'t','थ':'th','द':'d','ध':'dh','न':'n','प':'p','फ':'ph','ब':'b','भ':'bh','म':'m','य':'y','र':'r','ल':'l','ळ':'l','व':'v','श':'sh','ष':'sh','स':'s','ह':'h'};
+const NUKTA = {'क':'q','ख':'kh','ग':'gh','ज':'z','ड':'d','ढ':'dh','फ':'f','य':'y'};
+const VOW = {'अ':'a','आ':'aa','इ':'i','ई':'ee','उ':'u','ऊ':'oo','ऋ':'ri','ए':'e','ऐ':'ai','ओ':'o','औ':'au','ऑ':'o','ऍ':'e','ॲ':'e'};
+const MATRA = {'ा':'aa','ि':'i','ी':'ee','ु':'u','ू':'oo','ृ':'ri','े':'e','ै':'ai','ो':'o','ौ':'au','ॉ':'o','ॅ':'e'};
+const DICT = {'यह':'yeh','वह':'woh','है':'hai','हैं':'hain','में':'mein','नहीं':'nahi','और':'aur','कि':'ki','के':'ke','की':'ki','का':'ka','को':'ko','से':'se','पर':'par','भी':'bhi','तो':'toh','ही':'hi','हम':'hum','तुम':'tum','आप':'aap','मैं':'main','कुछ':'kuch','क्या':'kya','क्यों':'kyun','कैसे':'kaise','अब':'ab','सब':'sab','बहुत':'bahut','अच्छा':'accha','चलिए':'chaliye','जो':'jo','लेकिन':'lekin','एक':'ek','ये':'ye','वो':'wo','था':'tha','थी':'thi','थे':'the','गया':'gaya','रहा':'raha','रही':'rahi','रहे':'rahe','कर':'kar','करना':'karna','हाँ':'haan','हां':'haan','मुझे':'mujhe','उसको':'usko','इसको':'isko','अपने':'apne','अपना':'apna','सिर्फ':'sirf','सिर्फ़':'sirf','ज़्यादा':'zyada','ज्यादा':'zyada','बोर्ड':'board'};
+function translitWord(word) {
+  const m = word.match(/^([^\p{L}\p{M}\p{N}]*)(.*?)([^\p{L}\p{M}\p{N}]*)$/u);
+  const pre = m ? m[1] : '', core = m ? m[2] : word, post = m ? m[3] : '';
+  if (!/[\u0900-\u097F]/.test(core)) return word;
+  const nfc = core.normalize('NFC');
+  if (DICT[nfc]) return pre + DICT[nfc] + post.replace(/[।॥]/g, '.');
+  const w = core.normalize('NFD'); const U = [];
+  for (let i = 0; i < w.length; i++) {
+    const ch = w[i];
+    if (CONS[ch] !== undefined) {
+      let c = CONS[ch];
+      if (w[i + 1] === '\u093C') { c = NUKTA[ch] || c; i++; }
+      U.push({ c, v: 'a', inh: true });
+    } else if (MATRA[ch] !== undefined) { const u = U[U.length - 1]; if (u) { u.v = MATRA[ch]; u.inh = false; } }
+    else if (ch === '\u094D') { const u = U[U.length - 1]; if (u) { u.v = ''; u.inh = false; } }
+    else if (VOW[ch] !== undefined) U.push({ c: '', v: VOW[ch], inh: false });
+    else if (ch === '\u0902' || ch === '\u0901') { const u = U[U.length - 1]; if (u) u.nas = true; }
+    else if (ch === '\u0903') { const u = U[U.length - 1]; if (u) u.v += 'h'; }
+    else if (ch >= '\u0966' && ch <= '\u096F') U.push({ c: String(ch.charCodeAt(0) - 0x966), v: '', inh: false });
+    else if (ch === '\u093C' || ch === '\u093D') { /* skip */ }
+    else U.push({ c: ch, v: '', inh: false });
+  }
+  for (let i = U.length - 1; i >= 0; i--) {
+    const u = U[i];
+    if (!u.inh || !u.c) continue;
+    if (i === U.length - 1) { if (U.length > 1 && !u.nas) { u.v = ''; u.inh = false; } continue; }
+    const prev = U[i - 1], next = U[i + 1];
+    if (prev && prev.v && !prev.nas && next && next.c && next.v && !u.nas) { u.v = ''; u.inh = false; i--; }
+  }
+  let s = '';
+  for (let i = 0; i < U.length; i++) {
+    const u = U[i], prev = U[i - 1];
+    let v = u.v;
+    if (!u.c && prev && prev.v && v === 'e') v = 'ye';
+    s += u.c + v;
+    if (u.nas) { const nx = U[i + 1]; s += (nx && /^(p|b|m|ph|bh)/.test(nx.c)) ? 'm' : 'n'; }
+  }
+  const last = U[U.length - 1];
+  if (last && last.v === 'e' && last.nas && s.endsWith('en')) s = s.slice(0, -2) + 'ein';
+  if (s.length > 3 && s.endsWith('aa')) s = s.slice(0, -1);
+  if (s.endsWith('een')) s = s.slice(0, -3) + 'in';
+  else if (s.endsWith('ee')) s = s.slice(0, -2) + 'i';
+  if (s.length > 3 && s.endsWith('oo')) s = s.slice(0, -2) + 'u';
+  return pre + s + post.replace(/[।॥]/g, '.');
+}
+
+/* ---------------- language from script ---------------- */
+function scriptLabel(text) {
+  const tests = [[/[\u0900-\u097F]/, 'Hindi (Devanagari)'], [/[\u0980-\u09FF]/, 'Bengali'], [/[\u0A00-\u0A7F]/, 'Punjabi'], [/[\u0A80-\u0AFF]/, 'Gujarati'], [/[\u0B00-\u0B7F]/, 'Odia'], [/[\u0B80-\u0BFF]/, 'Tamil'], [/[\u0C00-\u0C7F]/, 'Telugu'], [/[\u0C80-\u0CFF]/, 'Kannada'], [/[\u0D00-\u0D7F]/, 'Malayalam'], [/[\u0600-\u06FF]/, 'Urdu or Arabic'], [/[\u0400-\u04FF]/, 'Russian'], [/[\u3040-\u30FF]/, 'Japanese'], [/[\uAC00-\uD7AF]/, 'Korean'], [/[\u4E00-\u9FFF]/, 'Chinese']];
+  let best = 'English or another Latin-script language', n = 0;
+  for (const [re, name] of tests) { const c = (text.match(new RegExp(re.source, 'g')) || []).length; if (c > n) { n = c; best = name; } }
+  return best;
+}
+
+/* ---------------- time helpers ---------------- */
+function fmt(t) { t = Math.max(0, t || 0); const m = Math.floor(t / 60), s = t - m * 60; return `${m}:${s.toFixed(2).padStart(5, '0')}`; }
+function fmtShort(t) { t = Math.max(0, t || 0); const m = Math.floor(t / 60), s = Math.floor(t - m * 60); return `${m}:${String(s).padStart(2, '0')}`; }
+function parseFmt(str) { const m = String(str).trim().match(/^(?:(\d+):)?(\d+(?:\.\d+)?)$/); if (!m) return NaN; return (m[1] ? +m[1] * 60 : 0) + +m[2]; }
+function stamp(t, sep) { t = Math.max(0, t); const h = Math.floor(t / 3600), m = Math.floor(t / 60) % 60, s = Math.floor(t) % 60, ms = Math.round((t - Math.floor(t)) * 1000) % 1000; return `${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}${sep}${String(ms).padStart(3,'0')}`; }
+function parseStamp(s) { const m = s.trim().match(/(?:(\d+):)?(\d+):(\d+)[,.](\d+)/); if (!m) return NaN; return (+(m[1] || 0)) * 3600 + (+m[2]) * 60 + (+m[3]) + (+m[4].padEnd(3, '0').slice(0, 3)) / 1000; }
+
+/* ---------------- words & captions ---------------- */
+function interp(parts, s, e, g) {
+  const lens = parts.map(p => Math.max(1, [...p].length)), tot = lens.reduce((a, b) => a + b, 0);
+  let acc = 0; const span = Math.max(0.05, e - s);
+  return parts.map((p, i) => { const ws = s + span * acc / tot; acc += lens[i]; return { t: p, s: ws, e: s + span * acc / tot, g }; });
+}
+function regroup(keepSel = true) {
+  const W = S.words, n = ST.wordsPer, caps = []; let cur = [];
+  for (let i = 0; i < W.length; i++) {
+    const w = W[i], p = W[i - 1];
+    if (cur.length && (cur.length >= n || w.g !== p.g || w.s - p.e > 0.8 || /[.?!।]$/.test(p.t))) { caps.push(cur); cur = []; }
+    cur.push(i);
+  }
+  if (cur.length) caps.push(cur);
+  S.caps = caps.map(idx => ({ idx, s: W[idx[0]].s, e: W[idx[idx.length - 1]].e }));
+  S.caps.forEach((c, i) => { const nx = S.caps[i + 1]; c.end = nx ? (nx.s - c.e < 1 ? nx.s : c.e + 0.4) : c.e + 0.6; });
+  if (!keepSel || S.sel >= S.caps.length) S.sel = -1;
+  S.live = -1;
+  renderList(); draw();
+}
+function capIndexAt(t) {
+  const C = S.caps; let lo = 0, hi = C.length - 1, ans = -1;
+  while (lo <= hi) { const mid = (lo + hi) >> 1; if (C[mid].s <= t + 0.001) { ans = mid; lo = mid + 1; } else hi = mid - 1; }
+  if (ans >= 0 && t < C[ans].end) return ans;
+  return -1;
+}
+function capInfo(ws, st) {
+  const keys = new Set(ws.map((w, i) => w.hl ? i : -1).filter(i => i >= 0));
+  if (!keys.size && st.highlight) { const k = pickKey(ws); if (k >= 0) keys.add(k); }
+  const behind = new Set(ws.map((w, i) => w.bh ? i : -1).filter(i => i >= 0));
+  if (!behind.size && st.behind !== 'off') {
+    if (st.behind === 'all') ws.forEach((w, i) => behind.add(i));
+    else { const k = keys.size ? [...keys][0] : pickKey(ws); if (k >= 0) behind.add(k); }
+  }
+  return { ws, keys, behind, emoji: st.emoji ? emojiFor(ws) : '' };
+}
+
+/* ---------------- rendering ---------------- */
+function hexA(hex, a) { const h = hex.replace('#', ''); const n = parseInt(h.length === 3 ? h.split('').map(x => x + x).join('') : h, 16); return `rgba(${(n >> 16) & 255},${(n >> 8) & 255},${n & 255},${a})`; }
+function rr(ctx, x, y, w, h, r) { ctx.beginPath(); ctx.roundRect ? ctx.roundRect(x, y, w, h, r) : ctx.rect(x, y, w, h); ctx.fill(); }
+
+function drawCaption(ctx, W, H, t, info, front, st) {
+  const { ws, keys } = info; const base = st.size / 100 * H;
+  let cur = -1; front.forEach(i => { if (ws[i].s <= t + 0.02) cur = i; });
+  const toks = front.map(i => {
+    const w = ws[i]; const isKey = st.anim === 'karaoke' ? i === cur : keys.has(i);
+    let txt = w.t; if (st.caseMode === 'upper' || (st.caseMode === 'keyupper' && isKey)) txt = txt.toUpperCase();
+    const px = isKey ? base * st.keyScale : base;
+    const font = fontCSS(isKey ? st.keyFont : st.font, isKey ? st.keyWeight : st.weight, isKey ? st.keyItalic : st.italic, px);
+    const own = st.layout === 'lines' || (st.layout === 'stack' && isKey && st.anim !== 'karaoke');
+    return { i, w, txt, isKey, px, font, own };
+  });
+  ctx.save();
+  const lsp = px => (st.spacing * px / 100) + 'px';
+  for (const tk of toks) { ctx.font = tk.font; if ('letterSpacing' in ctx) ctx.letterSpacing = lsp(tk.px); tk.wd = ctx.measureText(tk.txt).width; ctx.font = fontCSS(st.font, st.weight, st.italic, base); tk.sp = ctx.measureText(' ').width; }
+  const maxW = st.maxW / 100 * W, lines = []; let line = [];
+  const lw = l => l.reduce((a, tk, j) => a + tk.wd + (j ? tk.sp : 0), 0);
+  for (const tk of toks) {
+    if (tk.own) { if (line.length) lines.push(line); lines.push([tk]); line = []; continue; }
+    if (line.length && lw(line) + tk.sp + tk.wd > maxW) { lines.push(line); line = []; }
+    line.push(tk);
+  }
+  if (line.length) lines.push(line);
+  const lh = l => Math.max(...l.map(tk => tk.px)) * st.lineGap;
+  const totalH = lines.reduce((a, l) => a + lh(l), 0);
+  let y = clamp(st.y / 100 * H - totalH / 2, base * 0.2, H - totalH - base * 0.2);
+  const cx = st.x / 100 * W;
+  if (st.effect === 'bar' && lines.length) { ctx.fillStyle = hexA(st.boxColor, st.boxAlpha * 0.7); ctx.fillRect(0, y - base * 0.45, W, totalH + base * 0.9); }
+  if (info.emoji) {
+    const anyShown = st.anim === 'none' || st.anim === 'karaoke' || ws.some(w => w.s <= t);
+    if (anyShown) { const ep = base * 1.7; ctx.font = `${Math.round(ep)}px "Apple Color Emoji","Segoe UI Emoji","Noto Color Emoji",sans-serif`; ctx.textAlign = 'center'; ctx.textBaseline = 'bottom'; ctx.fillText(info.emoji, cx, y - base * 0.15); }
+  }
+  for (const l of lines) {
+    const width = lw(l), h = lh(l); let x = cx - width / 2; const yc = y + h / 2;
+    if (st.effect === 'boxall') { ctx.fillStyle = hexA(st.boxColor, st.boxAlpha); const pad = base * 0.35; rr(ctx, x - pad, y + h * 0.04, width + pad * 2, h * 0.92, base * 0.25); }
+    l.forEach((tk, j) => { if (j) x += tk.sp; drawToken(ctx, tk, x, yc, t, st); x += tk.wd; });
+    y += h;
+  }
+  ctx.restore();
+}
+function drawToken(ctx, tk, x, yc, t, st) {
+  let alpha = 1, scale = 1; const s0 = tk.w.s;
+  if (st.anim === 'fade') { alpha = t >= s0 ? Math.min(1, 0.25 + (t - s0) / 0.12) : 0.25; }
+  else if (st.anim === 'pop') { if (t < s0) return; const p = Math.min(1, (t - s0) / 0.18); scale = Math.max(0.01, easeOutBack(p)); alpha = Math.min(1, p * 2); }
+  else if (st.anim === 'build') { if (t < s0) return; const p = Math.min(1, (t - s0) / 0.12); alpha = p; if (tk.isKey) scale = 0.7 + 0.3 * easeOutBack(Math.min(1, (t - s0) / 0.22)); }
+  ctx.save();
+  ctx.globalAlpha = alpha; ctx.translate(x + tk.wd / 2, yc); ctx.scale(scale, scale);
+  ctx.font = tk.font; if ('letterSpacing' in ctx) ctx.letterSpacing = (st.spacing * tk.px / 100) + 'px';
+  ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+  const accentFx = st.effect === 'underline' || st.effect === 'box';
+  const fill = tk.isKey && !accentFx ? st.keyColor : st.color;
+  if (tk.isKey && st.effect === 'box') { ctx.fillStyle = st.keyColor; const pad = tk.px * 0.18; rr(ctx, -tk.wd / 2 - pad, -tk.px * 0.62, tk.wd + pad * 2, tk.px * 1.24, tk.px * 0.18); }
+  if (st.effect === 'outline') { ctx.lineJoin = 'round'; ctx.miterLimit = 2; ctx.lineWidth = tk.px * st.strokeW / 100 * 2; ctx.strokeStyle = st.strokeColor; ctx.strokeText(tk.txt, 0, 0); }
+  if (st.effect === 'glow' && tk.isKey) {
+    ctx.shadowColor = st.keyColor; ctx.shadowBlur = tk.px * st.glow / 100; ctx.fillStyle = fill; ctx.fillText(tk.txt, 0, 0);
+    ctx.shadowBlur = tk.px * st.glow / 250;
+  } else if (['shadow', 'glow', 'underline', 'box'].includes(st.effect)) {
+    ctx.fillStyle = fill; ctx.shadowColor = 'rgba(0,0,0,.75)'; ctx.shadowBlur = tk.px * 0.35; ctx.shadowOffsetY = tk.px * 0.05; ctx.fillText(tk.txt, 0, 0);
+    ctx.shadowColor = 'rgba(0,0,0,.85)'; ctx.shadowBlur = tk.px * 0.08; ctx.shadowOffsetY = tk.px * 0.03;
+  }
+  ctx.fillStyle = fill; ctx.fillText(tk.txt, 0, 0);
+  ctx.shadowColor = 'transparent'; ctx.shadowBlur = 0; ctx.shadowOffsetY = 0;
+  if (tk.isKey && st.effect === 'underline') { ctx.fillStyle = st.keyColor; ctx.fillRect(-tk.wd / 2, tk.px * 0.5, tk.wd, Math.max(2, tk.px * 0.08)); }
+  ctx.restore();
+}
+function drawBehind(ctx, W, H, t, info, mode, st) {
+  const ws = info.ws, idx = [...info.behind].sort((a, b) => a - b); if (!idx.length) return;
+  const first = ws[idx[0]];
+  if (mode !== 'mag' && t < first.s - 0.03) return;
+  let txt = idx.map(i => cleanW(ws[i].t) || ws[i].t).join(' ');
+  if (mode === 'mag' || st.caseMode === 'upper' || st.caseMode === 'keyupper') txt = txt.toUpperCase();
+  ctx.save();
+  ctx.font = fontCSS(st.behindFont, 900, false, 100);
+  const w100 = Math.max(1, ctx.measureText(txt).width);
+  const px = Math.min(st.behindSize / 100 * W, W * 0.94 / w100 * 100);
+  const p = mode === 'mag' ? 1 : Math.min(1, (t - first.s) / 0.25);
+  const sc = mode === 'mag' ? 1 : Math.max(0.01, 0.6 + 0.4 * easeOutBack(Math.max(0, p)));
+  ctx.globalAlpha = st.behindAlpha * (mode === 'mag' ? 1 : Math.min(1, Math.max(0, p) * 1.6));
+  ctx.translate(W / 2, st.behindY / 100 * H); ctx.scale(sc, sc);
+  ctx.font = fontCSS(st.behindFont, 900, false, px); ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+  if (mode === 'echo') { ctx.lineWidth = Math.max(2, px * 0.035); ctx.strokeStyle = hexA(st.behindColor, 0.9); ctx.strokeText(txt, 0, 0); }
+  else { ctx.fillStyle = st.behindColor; ctx.fillText(txt, 0, 0); }
+  ctx.restore();
+}
+function drawTitle(ctx, W, H, st) {
+  const px2 = st.tSize / 100 * H, px1 = px2 * 0.62; const x = st.tX / 100 * W; let y = st.tY / 100 * H;
+  ctx.save(); ctx.textAlign = 'left'; ctx.textBaseline = 'top'; ctx.shadowColor = 'rgba(0,0,0,.6)'; ctx.shadowBlur = px2 * 0.25;
+  if (st.t1) { ctx.font = fontCSS(st.tFont1, 400, false, px1); ctx.fillStyle = st.tColor1; ctx.fillText(st.t1, x, y); y += px1 * 1.15; }
+  if (st.t2) { ctx.font = fontCSS(st.tFont2, 900, true, px2); ctx.fillStyle = st.tColor2; ctx.fillText(st.t2, x, y); }
+  ctx.restore();
+}
+function renderTo(ctx, W, H, t, o) {
+  const st = o.st || ST; ctx.save(); o.bg(ctx); ctx.restore();
+  const info = o.info;
+  if (info) {
+    const mode = st.behind === 'off' ? 'key' : st.behind;
+    const hasBehind = info.behind.size > 0;
+    if (hasBehind) { drawBehind(ctx, W, H, t, info, mode, st); if (o.person) o.person(ctx); }
+    if (st.title) drawTitle(ctx, W, H, st);
+    const front = info.ws.map((w, i) => i).filter(i => !(hasBehind && (mode === 'all' || (mode === 'key' && info.behind.has(i)))));
+    if (front.length) drawCaption(ctx, W, H, t, info, front, st);
+  } else if (st.title) drawTitle(ctx, W, H, st);
+}
+
+/* ---------------- speaker cutout ---------------- */
+let seg = null, segLoading = false, segFailed = false, lastTs = 0, maskInvert = null, maskData = null;
+const maskCv = document.createElement('canvas'), personCv = document.createElement('canvas');
+function setCut(msg) { $('#cutStatus').textContent = msg; }
+async function ensureSeg() {
+  if (seg || segLoading || segFailed) return; segLoading = true; setCut('Loading the speaker cutout model (first time only)…');
+  try {
+    const v = await import(MP_URL + '/vision_bundle.mjs');
+    const fs = await v.FilesetResolver.forVisionTasks(MP_URL + '/wasm');
+    const opts = d => ({ baseOptions: { modelAssetPath: SEG_MODEL, delegate: d }, runningMode: 'VIDEO', outputCategoryMask: false, outputConfidenceMasks: true });
+    try { seg = await v.ImageSegmenter.createFromOptions(fs, opts('GPU')); } catch (e) { seg = await v.ImageSegmenter.createFromOptions(fs, opts('CPU')); }
+    setCut('Speaker cutout is on for words sent behind.'); draw();
+  } catch (e) { console.error(e); segFailed = true; setCut('The speaker cutout could not load. Check your internet connection, then reload the page.'); }
+  finally { segLoading = false; }
+}
+function updateMask(src) {
+  let ts = performance.now(); if (ts <= lastTs) ts = lastTs + 1; lastTs = ts;
+  seg.segmentForVideo(src, ts, res => {
+    const ms = res.confidenceMasks; if (!ms || !ms.length) return;
+    const m = ms[0], w = m.width, h = m.height, f = m.getAsFloat32Array();
+    if (maskCv.width !== w || maskCv.height !== h) { maskCv.width = w; maskCv.height = h; maskData = null; }
+    const mctx = maskCv.getContext('2d'); if (!maskData) maskData = mctx.createImageData(w, h);
+    let inv = ms.length > 1;
+    if (ms.length === 1) { if (maskInvert === null) { const c = f[(h >> 1) * w + (w >> 1)]; const corner = (f[0] + f[w - 1] + f[(h - 1) * w] + f[h * w - 1]) / 4; maskInvert = corner > c; } inv = maskInvert; }
+    const d = maskData.data;
+    for (let i = 0, n = w * h; i < n; i++) { let v = f[i]; if (inv) v = 1 - v; v = (v - 0.35) / 0.3; d[i * 4 + 3] = (v < 0 ? 0 : v > 1 ? 1 : v) * 255; }
+    mctx.putImageData(maskData, 0, 0);
+  });
+}
+function drawPersonLive(ctx) {
+  const W = ctx.canvas.width, H = ctx.canvas.height;
+  if (personCv.width !== W || personCv.height !== H) { personCv.width = W; personCv.height = H; }
+  const p = personCv.getContext('2d');
+  p.globalCompositeOperation = 'source-over'; p.clearRect(0, 0, W, H); p.drawImage(S.video, 0, 0, W, H);
+  p.globalCompositeOperation = 'destination-in'; p.imageSmoothingEnabled = true; p.drawImage(maskCv, 0, 0, W, H);
+  p.globalCompositeOperation = 'source-over'; ctx.drawImage(personCv, 0, 0);
+}
+
+/* ---------------- live preview ---------------- */
+function currentInfo(t) {
+  const ci = capIndexAt(t); if (ci < 0) return { ci, info: null };
+  const c = S.caps[ci]; return { ci, info: capInfo(c.idx.map(i => S.words[i]), ST) };
+}
+function draw() {
+  const v = S.video, cv = $('#view'); if (!v.videoWidth || $('#editor').hidden) return;
+  const ctx = cv.getContext('2d'), W = cv.width, H = cv.height, t = v.currentTime;
+  const { ci, info } = currentInfo(t);
+  let person = null;
+  if (info && info.behind.size) { ensureSeg(); if (seg) { try { updateMask(v); person = drawPersonLive; } catch (e) { console.warn(e); } } }
+  renderTo(ctx, W, H, t, { bg: x => x.drawImage(v, 0, 0, W, H), person, info });
+  $('#scrub').value = t; $('#tc').textContent = `${fmtShort(t)} / ${fmtShort(v.duration)}`;
+  if (ci !== S.live) {
+    $$('.cap.live').forEach(el => el.classList.remove('live'));
+    const el = $(`.cap[data-i="${ci}"]`); if (el) { el.classList.add('live'); if (!v.paused) el.scrollIntoView({ block: 'nearest' }); }
+    S.live = ci;
+  }
+}
+function loop() { draw(); if (!S.video.paused && !S.video.ended) { if (S.video.requestVideoFrameCallback) S.video.requestVideoFrameCallback(loop); else requestAnimationFrame(loop); } }
+function setPlayIcon() { const p = S.video.paused; $('#icoPlay').hidden = !p; $('#icoPause').hidden = p; $('#btnPlay').setAttribute('aria-label', p ? 'Play' : 'Pause'); }
+S.video.addEventListener('play', () => { setPlayIcon(); loop(); });
+S.video.addEventListener('pause', () => { setPlayIcon(); draw(); });
+S.video.addEventListener('ended', setPlayIcon);
+S.video.addEventListener('seeked', draw);
+$('#btnPlay').onclick = () => { if (S.exporting) return; S.video.paused ? S.video.play() : S.video.pause(); };
+$('#scrub').oninput = e => { S.video.currentTime = +e.target.value; };
+document.addEventListener('keydown', e => {
+  if (e.code !== 'Space' || $('#editor').hidden || S.exporting) return;
+  const tg = e.target; if (tg.isContentEditable || /INPUT|SELECT|TEXTAREA|BUTTON/.test(tg.tagName)) return;
+  e.preventDefault(); S.video.paused ? S.video.play() : S.video.pause();
+});
+
+/* ---------------- caption list ---------------- */
+function chipsHTML(ci) {
+  const c = S.caps[ci]; if (!c) return '';
+  const ws = c.idx.map(i => S.words[i]);
+  return `<div class="chips">${ws.map((w, j) => `<button class="chip${w.hl ? ' hl' : ''}${w.bh ? ' bh' : ''}" data-w="${c.idx[j]}">${esc(w.t)}</button>`).join('')}</div><div class="capnote">${S.tap === 'hl' ? 'Tap a word to highlight it. If you pick none, the keyword is chosen for you when auto highlight is on.' : 'Tap a word to send it behind the speaker.'}</div>`;
+}
+function showChips(ci) {
+  $$('#capList .chips, #capList .capnote').forEach(el => el.remove());
+  $$('.cap.sel').forEach(el => el.classList.remove('sel'));
+  const row = $(`.cap[data-i="${ci}"]`); if (!row) return;
+  row.classList.add('sel'); row.insertAdjacentHTML('beforeend', chipsHTML(ci));
+}
+function renderList() {
+  const L = $('#capList');
+  if (!S.caps.length) { L.innerHTML = '<p class="hint" style="padding:8px">No captions yet. Import an SRT file or create subtitles from a video.</p>'; return; }
+  L.innerHTML = S.caps.map((c, ci) => {
+    const txt = c.idx.map(i => S.words[i].t).join(' ');
+    return `<div class="cap${ci === S.live ? ' live' : ''}" data-i="${ci}">
+      <div class="ctime"><input value="${fmt(c.s)}" data-k="s" aria-label="Start time"> – <input value="${fmt(c.e)}" data-k="e" aria-label="End time"></div>
+      <div class="ctext" contenteditable="true" spellcheck="false" data-orig="${esc(txt)}">${esc(txt)}</div></div>`;
+  }).join('');
+  if (S.sel >= 0) showChips(S.sel);
+}
+$('#capList').addEventListener('click', e => {
+  const chip = e.target.closest('.chip');
+  if (chip) { const w = S.words[+chip.dataset.w]; if (S.tap === 'hl') w.hl = !w.hl; else w.bh = !w.bh; chip.classList.toggle('hl', !!w.hl); chip.classList.toggle('bh', !!w.bh); markEdited(false); draw(); return; }
+  const row = e.target.closest('.cap'); if (!row) return;
+  const ci = +row.dataset.i;
+  if (ci !== S.sel) { S.sel = ci; S.video.pause(); S.video.currentTime = S.caps[ci].s + 0.01; showChips(ci); }
+});
+$('#capList').addEventListener('keydown', e => { if (e.key === 'Enter' && (e.target.classList.contains('ctext') || e.target.tagName === 'INPUT')) { e.preventDefault(); e.target.blur(); } });
+$('#capList').addEventListener('focusout', e => {
+  const row = e.target.closest('.cap'); if (!row) return; const ci = +row.dataset.i; const c = S.caps[ci]; if (!c) return;
+  if (e.target.classList.contains('ctext')) {
+    const nt = e.target.textContent.replace(/\s+/g, ' ').trim();
+    if (nt === e.target.dataset.orig) return;
+    const parts = nt ? nt.split(' ') : [];
+    const g = S.words[c.idx[0]].g;
+    const old = c.idx.map(i => S.words[i]), used = new Set();
+    const nw = interp(parts, c.s, c.e, g);
+    nw.forEach(w => { const j = old.findIndex((o, k) => !used.has(k) && o.t === w.t); if (j >= 0) { used.add(j); w.hl = old[j].hl; w.bh = old[j].bh; } });
+    if (!parts.length) S.words.splice(c.idx[0], c.idx.length);
+    else S.words.splice(c.idx[0], c.idx.length, ...nw);
+    S.sel = ci; regroup();
+  } else if (e.target.tagName === 'INPUT') {
+    const inS = row.querySelector('input[data-k="s"]'), inE = row.querySelector('input[data-k="e"]');
+    const s = parseFmt(inS.value), en = parseFmt(inE.value), dur = S.video.duration || 1e9;
+    const bad = isNaN(s) || isNaN(en) || s < 0 || en <= s || en > dur + 1;
+    inS.classList.toggle('bad', bad); inE.classList.toggle('bad', bad);
+    if (bad) { inS.title = inE.title = 'Use minutes:seconds like 0:12.50, with the end after the start.'; return; }
+    if (Math.abs(s - c.s) < 0.005 && Math.abs(en - c.e) < 0.005) return;
+    const os = c.s, span = Math.max(0.01, c.e - c.s);
+    c.idx.forEach(i => { const w = S.words[i]; w.s = s + (w.s - os) / span * (en - s); w.e = s + (w.e - os) / span * (en - s); });
+    S.words.sort((a, b) => a.s - b.s); S.sel = ci; regroup();
+  }
+});
+$$('[data-tap]').forEach(b => b.onclick = () => { S.tap = b.dataset.tap; $$('[data-tap]').forEach(x => x.classList.toggle('on', x === b)); if (S.sel >= 0) showChips(S.sel); });
+
+/* ---------------- style panel ---------------- */
+const W_OPTS = [[400,'Regular'],[500,'Medium'],[700,'Bold'],[900,'Black']];
+const PANEL = {
+  text: [['font','Font','font'],['weight','Weight','sel',W_OPTS],['size','Size','range',1.5,10,0.1,'%'],['color','Text color','color'],['caseMode','Letter case','sel',[['none','As written'],['upper','ALL CAPS'],['keyupper','Caps on highlight']]],['spacing','Letter spacing','range',-5,30,1,''],['lineGap','Line spacing','range',0.8,2,0.05,''],['maxW','Max width','range',30,100,1,'%'],['x','Left to right','range',5,95,1,'%'],['y','Top to bottom','range',3,97,1,'%'],['italic','Italic','check']],
+  highlight: [['keyFont','Highlight font','font'],['keyWeight','Highlight weight','sel',W_OPTS],['keyScale','Highlight size','range',1,3,0.05,'×'],['keyColor','Highlight color','color'],['highlight','Pick a keyword in every caption automatically','check'],['keyItalic','Italic highlight','check'],['emoji','Add emojis automatically','check']],
+  effects: [['effect','Effect','sel',[['none','None'],['outline','Outline'],['shadow','Soft shadow'],['glow','Glow on highlight'],['box','Box behind highlight'],['underline','Underline highlight'],['boxall','Box behind text'],['bar','Full-width bar']]],['strokeColor','Outline color','color'],['strokeW','Outline thickness','range',2,30,1,''],['glow','Glow strength','range',0,120,1,''],['boxColor','Box and bar color','color'],['boxAlpha','Box opacity','range',0.1,1,0.05,'']],
+  motion: [['anim','Animation','sel',[['none','None'],['fade','Fade in word by word'],['pop','Pop word by word'],['build','Build up word by word'],['karaoke','Karaoke highlight']]],['layout','Layout','sel',[['inline','Same line'],['stack','Highlight on its own line'],['lines','One word per line']]],['wordsPer','Words per caption','range',1,10,1,'']],
+  behind: [['behind','Text behind speaker','sel',[['off','Only words I pick'],['key','Keyword behind'],['echo','Outline echo behind'],['mag','Magazine title'],['all','Whole caption behind']]],['behindFont','Behind font','font'],['behindSize','Behind size','range',8,50,1,''],['behindY','Behind height','range',5,80,1,'%'],['behindColor','Behind color','color'],['behindAlpha','Behind opacity','range',0.2,1,0.05,''],['tipB','To choose the words yourself, pick “Send behind” above the caption list, then tap words.','note'],['flip','Flip the cutout (use this if words show in front of the speaker)','btn']],
+  title: [['title','Show a topic title at the top','check'],['t1','Small line','text'],['t2','Big line','text'],['tFont1','Small line font','font'],['tFont2','Big line font','font'],['tColor1','Small line color','color'],['tColor2','Big line color','color'],['tSize','Title size','range',2,10,0.1,'%'],['tX','Left to right','range',2,90,1,'%'],['tY','Top to bottom','range',2,90,1,'%']]
+};
+let tab = 'text';
+function fmtVal(v, unit) { const n = +v; return (Number.isInteger(n) ? n : n.toFixed(2).replace(/0+$/, '').replace(/\.$/, '')) + unit; }
+function renderControls() {
+  const box = $('#controls');
+  box.innerHTML = PANEL[tab].map(([k, label, type, a, b, step, unit]) => {
+    if (type === 'check') return `<label class="ctl check"><input type="checkbox" data-k="${k}" ${ST[k] ? 'checked' : ''}><span>${label}</span></label>`;
+    if (type === 'note') return `<p class="hint ctl wide" style="margin:0">${label}</p>`;
+    if (type === 'btn') return `<div class="ctl wide"><button class="ghost sm" data-act="${k}">${label}</button></div>`;
+    let inner = '';
+    if (type === 'font') inner = `<select data-k="${k}">${FONTS.map(([f]) => `<option ${ST[k] === f ? 'selected' : ''}>${f}</option>`).join('')}</select>`;
+    else if (type === 'sel') inner = `<select data-k="${k}">${a.map(([v, l]) => `<option value="${v}" ${String(ST[k]) === String(v) ? 'selected' : ''}>${l}</option>`).join('')}</select>`;
+    else if (type === 'color') inner = `<input type="color" data-k="${k}" value="${ST[k]}">`;
+    else if (type === 'text') inner = `<input type="text" data-k="${k}" value="${esc(ST[k])}">`;
+    else if (type === 'range') inner = `<input type="range" data-k="${k}" min="${a}" max="${b}" step="${step}" value="${ST[k]}">`;
+    const wide = type === 'text' || k === 'effect' || k === 'anim' || k === 'layout' || k === 'behind';
+    return `<label class="ctl${wide ? ' wide' : ''}"><span class="lab"><span>${label}</span>${type === 'range' ? `<span class="val" data-v="${k}">${fmtVal(ST[k], unit)}</span>` : ''}</span>${inner}</label>`;
+  }).join('');
+}
+$('#controls').addEventListener('input', e => {
+  const el = e.target, k = el.dataset.k; if (!k) return;
+  const def = Object.values(PANEL).flat().find(d => d[0] === k);
+  let v = el.type === 'checkbox' ? el.checked : el.type === 'range' ? +el.value : el.value;
+  if (k === 'weight' || k === 'keyWeight') v = +v;
+  ST[k] = v;
+  if (def && def[2] === 'range') { const out = $(`[data-v="${k}"]`); if (out) out.textContent = fmtVal(v, def[6]); }
+  markEdited(true);
+  if (k === 'wordsPer') regroup(); else { fontsThen(draw); }
+});
+$('#controls').addEventListener('click', e => { const b = e.target.closest('[data-act="flip"]'); if (b) { maskInvert = !maskInvert; draw(); } });
+$$('#tabs .tab').forEach(b => b.onclick = () => { tab = b.dataset.tab; $$('#tabs .tab').forEach(x => x.classList.toggle('on', x === b)); renderControls(); });
+function fontsThen(fn) { const fams = [ST.font, ST.keyFont, ST.behindFont, ST.tFont1, ST.tFont2]; Promise.all(fams.map(f => document.fonts.load(`900 40px "${f}"`, 'Aa अ').catch(() => {}))).then(fn); fn(); }
+function markEdited(styleChange) { if (styleChange) { edited = true; updatePresetPill(); } }
+function updatePresetPill() { const p = allPresets().find(x => x.id === presetId); $('#presetName').textContent = (p ? p.name : 'Custom') + (edited ? ' (edited)' : ''); }
+function allPresets() { return [...MINE.map(m => ({ ...m, tag: 'My style', mine: true })), ...PRESETS]; }
+function applyPreset(id) {
+  const p = allPresets().find(x => x.id === id); if (!p) return;
+  const keepTitle = { t1: ST.t1, t2: ST.t2 };
+  ST = { ...BASE, ...p.s, ...(p.mine ? {} : keepTitle) };
+  if (!p.mine && S.video.videoWidth > S.video.videoHeight) {
+    const multi = ST.layout !== 'inline';
+    ST.y = ST.behind !== 'off' ? 86 : Math.max(ST.y, multi ? 80 : 85);
+  }
+  presetId = id; presetSnapshot = { ...ST }; edited = false;
+  $$('.pcard').forEach(c => c.classList.toggle('on', c.dataset.id === id));
+  updatePresetPill(); renderControls(); regroup(); fontsThen(draw);
+}
+
+/* preset thumbnails */
+const SAMPLE = ['Aaj', 'hum', 'NIOS', 'Board', 'ki', 'baat', 'karenge'];
+function silhouette(ctx, W, H, color) { ctx.fillStyle = color; ctx.beginPath(); ctx.arc(W / 2, H * 0.3, W * 0.17, 0, Math.PI * 2); ctx.fill(); ctx.beginPath(); ctx.ellipse(W / 2, H * 0.92, W * 0.38, H * 0.42, 0, Math.PI, 0); ctx.fill(); ctx.fillRect(W / 2 - W * 0.38, H * 0.92, W * 0.76, H * 0.1); }
+function drawThumb(cv, p) {
+  const st = { ...BASE, ...p.s }, W = cv.width, H = cv.height, ctx = cv.getContext('2d');
+  const n = st.wordsPer; const start = n <= 1 ? 2 : n === 2 ? 2 : n === 3 ? 1 : 0;
+  const ws = SAMPLE.slice(start, start + Math.min(n, 5)).map((t, i) => ({ t, s: i * 0.1, e: i * 0.1 + 0.1 }));
+  const info = capInfo(ws, st); const isB = st.behind !== 'off';
+  renderTo(ctx, W, H, 99, { st, info, bg: x => { x.fillStyle = '#2A3150'; x.fillRect(0, 0, W, H); if (!isB) silhouette(x, W, H, '#465079'); }, person: isB ? x => silhouette(x, W, H, '#465079') : null });
+}
+function renderGallery() {
+  $('#gallery').innerHTML = allPresets().map(p => `<button class="pcard${p.id === presetId ? ' on' : ''}" data-id="${p.id}" title="${esc(p.name)}"><canvas width="180" height="320"></canvas><span class="pn">${esc(p.name)}</span><span class="pt">${esc(p.tag || '')}</span></button>`).join('');
+  $$('.pcard').forEach(b => { drawThumb(b.querySelector('canvas'), allPresets().find(p => p.id === b.dataset.id)); b.onclick = () => applyPreset(b.dataset.id); });
+}
+$('#btnSaveStyle').onclick = () => {
+  const name = prompt('Name your style', 'My style ' + (MINE.length + 1)); if (!name) return;
+  const id = 'mine-' + Date.now(); MINE.unshift({ id, name: name.slice(0, 40), s: { ...ST } });
+  if (!saveMine(MINE)) alert('This browser blocked saving. Your style works for now but will not be kept after you close the page.');
+  presetId = id; presetSnapshot = { ...ST }; edited = false; renderGallery(); updatePresetPill();
+};
+$('#btnResetStyle').onclick = () => { ST = { ...presetSnapshot }; edited = false; updatePresetPill(); renderControls(); regroup(); };
+
+/* ---------------- setup check ---------------- */
+async function reach(url, mode) {
+  const ac = new AbortController(); const tm = setTimeout(() => ac.abort(), 9000);
+  try { const r = await fetch(url, { mode, cache: 'no-store', signal: ac.signal }); return mode === 'no-cors' || r.ok; }
+  catch { return false; } finally { clearTimeout(tm); }
+}
+async function runChecks() {
+  const items = [
+    ['br', 'Browser', 'checking'], ['gpu', 'Graphics acceleration', 'checking'], ['hf', 'Speech model server', 'checking'], ['cdn', 'AI library server', 'checking'], ['seg', 'Speaker cutout server', 'checking']
+  ];
+  const st = {};
+  const paint = () => { $('#sysList').innerHTML = items.map(([k, n]) => { const v = st[k] || ['', 'Checking…']; return `<li><span class="dot ${v[0]}"></span><span class="nm">${n}</span><span class="tx">${v[1]}</span></li>`; }).join(''); };
+  paint();
+  st.br = IN_APP ? ['bad', 'Opened inside an app. Open the link in Chrome or Edge instead.'] : EMBEDDED ? ['bad', 'Shown inside another page. Open it in its own tab.'] : IS_MOBILE ? ['warn', 'Phone or tablet. Please use a laptop or desktop.'] : IS_CHROMIUM ? ['ok', 'Chrome or Edge, good.'] : ['warn', 'Not Chrome or Edge. Some parts may not work.'];
+  paint();
+  const [ad, hf, cdn, seg] = await Promise.all([
+    gpuAdapter(),
+    reach('https://huggingface.co/onnx-community/whisper-base_timestamped/resolve/main/config.json', 'cors'),
+    reach(TF_URL + '/package.json', 'cors'),
+    reach(SEG_MODEL, 'no-cors')
+  ]);
+  st.gpu = ad ? ['ok', 'Available, so subtitles will be fast.'] : ['warn', 'Not available. Subtitles still work, just slower. Use Fast accuracy.'];
+  st.hf = hf ? ['ok', 'Reachable.'] : ['bad', 'Blocked or offline. Office Wi-Fi often blocks it, so try another network or a phone hotspot.'];
+  st.cdn = cdn ? ['ok', 'Reachable.'] : ['bad', 'Blocked or offline. Try another network or a phone hotspot.'];
+  st.seg = seg ? ['ok', 'Reachable.'] : ['warn', 'Blocked or offline. Only the behind-the-speaker styles need it.'];
+  log(`checks: browser=${st.br[0]} gpu=${!!ad} hf=${hf} cdn=${cdn} seg=${seg}`);
+  paint();
+}
+$('#btnRecheck').onclick = runChecks;
+runChecks();
+
+/* ---------------- transcription ---------------- */
+let TF = null, ASR = null, asrKey = '';
+const MODELS = { fast: ['onnx-community/whisper-base_timestamped', 'onnx-community/whisper-base', 'Xenova/whisper-base'], better: ['onnx-community/whisper-small_timestamped', 'onnx-community/whisper-small', 'Xenova/whisper-small'], best: ['onnx-community/whisper-large-v3-turbo_timestamped', 'onnx-community/whisper-large-v3-turbo'] };
+async function gpuAdapter() { try { return navigator.gpu ? await navigator.gpu.requestAdapter() : null; } catch { return null; } }
+async function getASR(q, onProg) {
+  if (ASR && asrKey === q) return ASR;
+  if (!TF) { log('loading AI library'); try { TF = await import(TF_URL); } catch (e) { throw new Error('The AI library could not load from cdn.jsdelivr.net. ' + (e.message || e)); } TF.env.allowLocalModels = false; }
+  const ad = await gpuAdapter(); const f16 = !!(ad && ad.features && ad.features.has('shader-f16'));
+  if (q === 'best' && !ad) throw new Error('Best mode needs WebGPU, which this browser does not have. Choose Better, or open this page in Chrome or Edge.');
+  const tries = [];
+  for (const id of MODELS[q]) {
+    if (ad) {
+      const gpu = [{ encoder_model: 'fp32', decoder_model_merged: 'q4' }];
+      if (f16) { const h = { encoder_model: 'fp16', decoder_model_merged: 'q4' }; q === 'best' ? gpu.unshift(h) : gpu.push(h); }
+      gpu.forEach(dtype => tries.push({ id, device: 'webgpu', dtype }));
+    }
+    if (q !== 'best') tries.push({ id, device: 'wasm', dtype: 'q8' });
+  }
+  let last;
+  for (const a of tries) {
+    log(`loading ${a.id} on ${a.device} ${JSON.stringify(a.dtype)}`);
+    try { ASR = await TF.pipeline('automatic-speech-recognition', a.id, { device: a.device, dtype: a.dtype, progress_callback: onProg }); ASR.__info = a; asrKey = q; log('model ready'); return ASR; }
+    catch (e) { log(`failed: ${e && e.message || e}`); last = e; }
+  }
+  throw last || new Error('The speech model could not be loaded.');
+}
+function wordLevelOK(asr) { try { const ss = asr.model.sessions || {}; return Object.values(ss).some(s => (s.outputNames || []).some(n => n.startsWith('cross_attentions'))); } catch { return false; } }
+async function decodeAudio(file) {
+  const buf = await file.arrayBuffer();
+  const ac = new (window.AudioContext || window.webkitAudioContext)({ sampleRate: 16000 });
+  try {
+    let ab;
+    try { ab = await ac.decodeAudioData(buf); }
+    catch (e) { throw new Error('The sound in this video could not be read. If it is a very large or ProRes file, export a smaller H.264 MP4 and try again.'); }
+    if (ab.numberOfChannels < 2) return ab.getChannelData(0);
+    const a = ab.getChannelData(0), b = ab.getChannelData(1), out = new Float32Array(a.length);
+    for (let i = 0; i < a.length; i++) out[i] = (a[i] + b[i]) / 2; return out;
+  } finally { ac.close(); }
+}
+
+/* ---------------- start flow ---------------- */
+const STEPS = ['Reading the audio from your video', 'Loading the AI (first time only)', 'Listening and writing the subtitles', 'Putting the captions together'];
+function setStep(i) { $('#steps').innerHTML = STEPS.map((s, j) => `<li class="${j < i ? 'done' : j === i ? 'on' : ''}">${s}</li>`).join(''); }
+function setBar(p) { const b = $('#workBar'); if (p == null) b.classList.add('indet'); else { b.classList.remove('indet'); $('#barFill').style.width = clamp(p, 0, 100) + '%'; } }
+function show(id) { for (const s of ['start', 'work', 'editor']) $('#' + s).hidden = s !== id; const ed = id === 'editor'; $('#btnNew').hidden = !ed; $('#btnImport').hidden = !ed; $('#btnExport').hidden = !ed; }
+
+function pickFile(f) {
+  $('#fileErr').textContent = '';
+  if (!f) return;
+  if (!f.type.startsWith('video/') && !/\.(mp4|mov|m4v|webm|mkv)$/i.test(f.name)) { $('#fileErr').textContent = 'That file is not a video. Choose an MP4, MOV or WEBM file.'; return; }
+  S.file = f; if (S.url) URL.revokeObjectURL(S.url); S.url = URL.createObjectURL(f);
+  S.video.src = S.url;
+  $('#dropMain').textContent = f.name; $('#dropSub').textContent = `${(f.size / 1048576).toFixed(1)} MB. Choose a different file anytime.`;
+  $('#fileInfo').textContent = f.name;
+}
+$('#fileIn').onchange = e => pickFile(e.target.files[0]);
+const drop = $('#drop');
+drop.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); $('#fileIn').click(); } });
+['dragenter', 'dragover'].forEach(ev => drop.addEventListener(ev, e => { e.preventDefault(); drop.classList.add('over'); }));
+['dragleave', 'drop'].forEach(ev => drop.addEventListener(ev, e => { e.preventDefault(); drop.classList.remove('over'); }));
+drop.addEventListener('drop', e => pickFile(e.dataTransfer.files[0]));
+function videoReady() { return new Promise((res, rej) => { const v = S.video; if (v.readyState >= 1 && v.videoWidth) return res(); const ok = () => { cleanup(); res(); }, bad = () => { cleanup(); rej(new Error('This video could not be opened in the browser. Try exporting it as an H.264 MP4.')); }; const cleanup = () => { v.removeEventListener('loadedmetadata', ok); v.removeEventListener('error', bad); }; v.addEventListener('loadedmetadata', ok); v.addEventListener('error', bad); }); }
+function setupCanvas() { const v = S.video, cv = $('#view'); const k = Math.min(1, 1920 / Math.max(v.videoWidth, v.videoHeight)); cv.width = Math.round(v.videoWidth * k); cv.height = Math.round(v.videoHeight * k); $('#scrub').max = v.duration || 1; }
+
+async function run(q) {
+  const spoken = $('#spoken').value, sub = $('#subLang').value;
+  show('work'); $('#workErr').textContent = ''; $('#workActions').hidden = true; $('#errDetails').hidden = true; $('#btnCopyErr').textContent = 'Copy details';
+  log(`start: quality=${q} spoken=${spoken} subtitles=${sub} file=${S.file && S.file.name} (${S.file ? (S.file.size / 1048576).toFixed(1) : 0} MB)`); $('#workTitle').textContent = 'Making your subtitles';
+  let tick = null;
+  try {
+    setStep(0); setBar(null); $('#workNote').textContent = '';
+    await videoReady();
+    const audio = await decodeAudio(S.file);
+    if (!audio || audio.length < 1600) throw new Error('This video has no sound to listen to.');
+    const dur = audio.length / 16000;
+    log(`audio ok, ${dur.toFixed(1)} s`);
+    setStep(1); setBar(0);
+    const files = {}; let lastProg = performance.now();
+    tick = setInterval(() => { if (performance.now() - lastProg > 45000) $('#workNote').textContent = 'Loading has not moved for a while. Your network may be slow or blocking it. You can keep waiting, or go back and pick Fast, or try another network.'; }, 5000);
+    const asr = await getASR(q, p => {
+      if (p.status === 'progress' && p.total) { lastProg = performance.now(); files[p.file] = { l: p.loaded, t: p.total }; const L = Object.values(files).reduce((a, f) => a + f.l, 0), T = Object.values(files).reduce((a, f) => a + f.t, 0); setBar(L / T * 100); $('#workNote').textContent = `Loading the AI: ${(L / 1048576).toFixed(0)} of ${(T / 1048576).toFixed(0)} MB. This happens only the first time on this computer.`; }
+    });
+    clearInterval(tick); tick = null;
+    setStep(2); setBar(null);
+    const t0 = performance.now();
+    const dev = asr.__info.device === 'webgpu' ? 'using your graphics chip' : 'using your processor, which is slower';
+    tick = setInterval(() => { $('#workNote').textContent = `Listening, ${fmtShort((performance.now() - t0) / 1000)} so far, ${dev}. A 1-minute video usually takes under a minute on a recent Mac.`; }, 500);
+    const gen = { chunk_length_s: 30, stride_length_s: 5, return_timestamps: wordLevelOK(asr) ? 'word' : true };
+    let language = spoken === 'auto' ? null : spoken, task = 'transcribe';
+    if (sub === 'hi' || sub === 'hinglish') language = 'hi';
+    if (sub === 'en') { if (spoken === 'en') language = 'en'; else task = 'translate'; }
+    if (language) gen.language = language; if (task === 'translate') gen.task = 'translate';
+    let out;
+    try { out = await asr(audio, gen); }
+    catch (e) { if (gen.return_timestamps === 'word') { console.warn('Word timing failed, using sentence timing', e); gen.return_timestamps = true; out = await asr(audio, gen); } else throw e; }
+    clearInterval(tick); tick = null;
+    setStep(3);
+    const chunks = (out.chunks && out.chunks.length) ? out.chunks : [{ text: out.text || '', timestamp: [0, dur] }];
+    const words = []; let g = 0;
+    if (gen.return_timestamps === 'word') {
+      chunks.forEach((c, i) => {
+        const txt = (c.text || '').trim(); if (!txt || /^[\[(].*[\])]$/.test(txt)) return;
+        let s = c.timestamp[0] ?? 0, e = c.timestamp[1] ?? (chunks[i + 1]?.timestamp[0] ?? s + 0.3);
+        const p = words[words.length - 1]; if (p && (s - p.e > 0.6 || /[.?!।]$/.test(p.t))) g++;
+        txt.split(/\s+/).forEach((part, k, arr) => { const span = (e - s) / arr.length; words.push({ t: part, s: s + span * k, e: s + span * (k + 1), g }); });
+      });
+    } else {
+      chunks.forEach((c, i) => {
+        const txt = (c.text || '').replace(/\[[^\]]*\]|\([^)]*\)/g, ' ').trim(); if (!txt) return;
+        const s = c.timestamp[0] ?? 0, e = c.timestamp[1] ?? (chunks[i + 1]?.timestamp[0] ?? dur);
+        words.push(...interp(txt.split(/\s+/), s, Math.max(s + 0.2, e), g++));
+      });
+    }
+    if (!words.length) throw new Error('No speech was found in this video. Check that it has someone talking and try again.');
+    if (sub === 'hinglish') words.forEach(w => { w.t = translitWord(w.t); });
+    S.words = words.sort((a, b) => a.s - b.s);
+    const allText = words.map(w => w.t).join(' ');
+    S.langLabel = sub === 'hinglish' ? 'Hinglish (from Hindi speech)' : sub === 'en' && task === 'translate' ? 'English (translated)' : 'Detected: ' + scriptLabel(allText);
+    openEditor();
+  } catch (e) {
+    console.error(e); if (tick) clearInterval(tick);
+    $('#workTitle').textContent = 'Something stopped the subtitles';
+    const msg = String(e && e.message || e);
+    log('ERROR: ' + msg);
+    $('#workErr').textContent = /Failed to fetch|NetworkError|network|ERR_/i.test(msg) ? 'The AI could not load. Your internet may be off, or this network may block huggingface.co. Try another Wi-Fi or a phone hotspot, then try again.' : msg;
+    $('#errText').textContent = [msg, (e && e.stack || '').split('\n').slice(0, 4).join('\n'), '', ...LOG, '', 'Browser: ' + UA, 'Page: ' + location.href].join('\n');
+    $('#errDetails').hidden = false;
+    $('#workActions').hidden = false; $('#btnRetryFast').hidden = q === 'fast'; setBar(0);
+  }
+}
+$('#btnCopyErr').onclick = async () => { const t = $('#errText').textContent; try { await navigator.clipboard.writeText(t); $('#btnCopyErr').textContent = 'Copied'; } catch { const r = document.createRange(); r.selectNodeContents($('#errText')); const sel = getSelection(); sel.removeAllRanges(); sel.addRange(r); $('#btnCopyErr').textContent = 'Selected, press Cmd+C'; } };
+$('#btnStart').onclick = () => { if (!S.file) { $('#fileErr').textContent = 'Choose a video first.'; return; } run($('#quality').value); };
+$('#btnRetryFast').onclick = () => { $('#quality').value = 'fast'; run('fast'); };
+$('#btnBack').onclick = () => show('start');
+$('#btnStartSrt').onclick = () => { if (!S.file) { $('#fileErr').textContent = 'Choose the video first, then pick its SRT file.'; return; } $('#srtIn').click(); };
+$('#btnImport').onclick = () => $('#srtIn').click();
+$('#srtIn').onchange = async e => {
+  const f = e.target.files[0]; e.target.value = ''; if (!f) return;
+  const txt = await f.text(); const segs = [];
+  for (const b of txt.replace(/\r/g, '').split(/\n\s*\n/)) {
+    const lines = b.trim().split('\n'); const ti = lines.findIndex(l => l.includes('-->')); if (ti < 0) continue;
+    const [a, c] = lines[ti].split('-->'); const s = parseStamp(a), en = parseStamp(c);
+    const text = lines.slice(ti + 1).join(' ').replace(/<[^>]+>/g, '').trim();
+    if (text && !isNaN(s) && !isNaN(en) && en > s) segs.push({ s, e: en, text });
+  }
+  if (!segs.length) { const m = 'That file has no subtitles this page can read. Use an SRT or VTT file.'; if ($('#editor').hidden) $('#fileErr').textContent = m; else alert(m); return; }
+  S.words = segs.flatMap((sg, i) => interp(sg.text.split(/\s+/), sg.s, sg.e, i));
+  S.langLabel = 'From your file: ' + scriptLabel(segs.map(s => s.text).join(' '));
+  try { await videoReady(); } catch (err) { $('#fileErr').textContent = err.message; return; }
+  openEditor();
+};
+function openEditor() {
+  show('editor'); setupCanvas(); $('#langPill').textContent = S.langLabel;
+  renderGallery(); applyPreset(presetId); regroup(false);
+  S.video.currentTime = Math.min(S.video.duration || 0, (S.words[0]?.s || 0) + 0.3);
+  loadFonts().then(() => { renderGallery(); draw(); });
+}
+$('#btnNew').onclick = () => { if (confirm('Start over with a new video? Your current captions will be cleared.')) location.reload(); };
+
+/* ---------------- export ---------------- */
+function fileGroups() {
+  const W = S.words, out = []; let cur = [];
+  const len = a => a.map(i => W[i].t).join(' ').length;
+  for (let i = 0; i < W.length; i++) {
+    const w = W[i], p = W[i - 1];
+    if (cur.length && (w.g !== p.g || w.s - p.e > 0.8 || /[.?!।]$/.test(p.t) || cur.length >= 8 || len([...cur, i]) > 42)) { out.push(cur); cur = []; }
+    cur.push(i);
+  }
+  if (cur.length) out.push(cur);
+  return out.map(idx => ({ idx, s: W[idx[0]].s, e: W[idx[idx.length - 1]].e }));
+}
+function buildSubs(kind) {
+  const lines = kind === 'vtt' ? ['WEBVTT', ''] : [];
+  fileGroups().forEach((c, i) => {
+    const text = c.idx.map(j => S.words[j].t).join(' ');
+    if (kind === 'srt') lines.push(String(i + 1));
+    lines.push(`${stamp(c.s, kind === 'srt' ? ',' : '.')} --> ${stamp(Math.max(c.e, c.s + 0.3), kind === 'srt' ? ',' : '.')}`, text, '');
+  });
+  return lines.join('\n');
+}
+function download(blob, name) { const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = name; document.body.appendChild(a); a.click(); setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 4000); }
+const baseName = () => (S.file?.name || 'video').replace(/\.[^.]+$/, '');
+$('#btnExport').onclick = () => { $('#exErr').textContent = ''; $('#exStatus').textContent = ''; $('#exBarWrap').hidden = true; $('#exportModal').hidden = false; S.video.pause(); };
+$('#btnCloseExport').onclick = () => { if (!S.exporting) $('#exportModal').hidden = true; };
+$('#btnCancelExport').onclick = () => { S.cancelExport = true; S.video.pause(); };
+function once(el, ev) { return new Promise(r => el.addEventListener(ev, r, { once: true })); }
+$('#btnDoExport').onclick = async () => {
+  const srt = $('#exSrt').checked, vtt = $('#exVtt').checked, vid = $('#exVid').checked;
+  $('#exErr').textContent = '';
+  if (!srt && !vtt && !vid) { $('#exErr').textContent = 'Pick at least one thing to export.'; return; }
+  if (!S.caps.length) { $('#exErr').textContent = 'There are no captions to export yet.'; return; }
+  if (srt) download(new Blob([buildSubs('srt')], { type: 'text/plain' }), baseName() + '.srt');
+  if (vtt) download(new Blob([buildSubs('vtt')], { type: 'text/vtt' }), baseName() + '.vtt');
+  if (!vid) { $('#exStatus').textContent = 'Saved to your Downloads folder.'; return; }
+  if (!window.MediaRecorder || !$('#view').captureStream) { $('#exErr').textContent = 'This browser cannot record video. Use Chrome or Edge for the captioned video.'; return; }
+  await exportVideo();
+};
+async function exportVideo() {
+  const v = S.video, cv = $('#view');
+  const mime = ['video/mp4;codecs=avc1.640028,mp4a.40.2', 'video/mp4;codecs=avc1.4d002a,mp4a.40.2', 'video/mp4;codecs=avc1,mp4a', 'video/webm;codecs=vp9,opus', 'video/webm;codecs=vp8,opus', 'video/webm'].find(m => MediaRecorder.isTypeSupported(m));
+  if (!mime) { $('#exErr').textContent = 'This browser cannot record video. Use Chrome or Edge.'; return; }
+  S.exporting = true; S.cancelExport = false;
+  $('#btnDoExport').disabled = true; $('#btnCloseExport').hidden = true; $('#btnCancelExport').hidden = false; $('#exBarWrap').hidden = false; $('#exBar').style.width = '0%';
+  let actx = S.actx;
+  try {
+    if (!actx) { actx = S.actx = new AudioContext(); S.asrc = actx.createMediaElementSource(v); S.asrc.connect(actx.destination); }
+    if (actx.state === 'suspended') await actx.resume();
+    const dest = actx.createMediaStreamDestination(); S.asrc.connect(dest); try { S.asrc.disconnect(actx.destination); } catch {}
+    const stream = new MediaStream([...cv.captureStream(30).getVideoTracks(), ...dest.stream.getAudioTracks()]);
+    const rec = new MediaRecorder(stream, { mimeType: mime, videoBitsPerSecond: Math.min(16e6, Math.max(4e6, cv.width * cv.height * 5)) });
+    const chunks = []; rec.ondataavailable = e => { if (e.data && e.data.size) chunks.push(e.data); };
+    const stopped = new Promise(r => rec.onstop = r);
+    v.pause(); v.currentTime = 0; await once(v, 'seeked'); draw();
+    const prog = () => { $('#exBar').style.width = (v.currentTime / v.duration * 100) + '%'; $('#exStatus').textContent = `Recording ${fmtShort(v.currentTime)} of ${fmtShort(v.duration)}…`; };
+    v.addEventListener('timeupdate', prog);
+    rec.start(500);
+    await v.play();
+    await Promise.race([once(v, 'ended'), once(v, 'pause')]);
+    rec.stop(); await stopped; v.removeEventListener('timeupdate', prog);
+    S.asrc.disconnect(dest); S.asrc.connect(actx.destination);
+    if (S.cancelExport) { $('#exStatus').textContent = 'Recording stopped. Nothing was saved.'; }
+    else {
+      const ext = mime.includes('mp4') ? 'mp4' : 'webm';
+      download(new Blob(chunks, { type: mime.split(';')[0] }), `${baseName()}_subtitled.${ext}`);
+      $('#exBar').style.width = '100%';
+      $('#exStatus').textContent = ext === 'mp4' ? 'Saved to your Downloads folder.' : 'Saved to your Downloads folder as WEBM, because this browser cannot record MP4. Chrome on a Mac normally saves MP4.';
+    }
+  } catch (e) { console.error(e); $('#exErr').textContent = 'The video could not be recorded: ' + (e.message || e); try { S.asrc && actx && S.asrc.connect(actx.destination); } catch {} }
+  finally { S.exporting = false; $('#btnDoExport').disabled = false; $('#btnCloseExport').hidden = false; $('#btnCancelExport').hidden = true; v.currentTime = 0; }
+}
+
+/* expose for testing */
+window.__ss = { S, get ST() { return ST; }, translitWord, regroup, applyPreset, draw };
+</script>
+</body>
+</html>
